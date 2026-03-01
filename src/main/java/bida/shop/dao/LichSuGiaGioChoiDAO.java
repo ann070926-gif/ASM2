@@ -1,4 +1,3 @@
-// ===== LichSuGiaGioChoiDAO.java (FIX LỖI setTimestamp – GIỮ NGUYÊN LOGIC) =====
 package bida.shop.dao;
 
 import bida.shop.entity.HistoryPriceTime;
@@ -32,7 +31,6 @@ public class LichSuGiaGioChoiDAO {
         return list;
     }
 
-    // FIX: Date → Timestamp
     public int insert(HistoryPriceTime history) {
         String sql = "INSERT INTO LichSuGiaGioChoi (MaLichSuGia, MaBan, GiaCu, GiaMoi, NgayCapNhat, MaNVThayDoi) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = JDBCUtil.getConnection();
@@ -42,18 +40,16 @@ public class LichSuGiaGioChoiDAO {
             stmt.setString(2, history.getMaBan());
             stmt.setDouble(3, history.getGiaCu());
             stmt.setDouble(4, history.getGiaMoi());
-            stmt.setTimestamp(
-                5,
-                new Timestamp(history.getNgayCapNhat().getTime())
-            );
+            stmt.setTimestamp(5, new Timestamp(history.getNgayCapNhat().getTime()));
             stmt.setString(6, history.getMaNvThayDoi());
+
             return stmt.executeUpdate();
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    // FIX: Date → Timestamp
     public int update(HistoryPriceTime history) {
         String sql = "UPDATE LichSuGiaGioChoi SET MaBan=?, GiaCu=?, GiaMoi=?, NgayCapNhat=?, MaNVThayDoi=? WHERE MaLichSuGia=?";
         try (Connection conn = JDBCUtil.getConnection();
@@ -62,13 +58,19 @@ public class LichSuGiaGioChoiDAO {
             stmt.setString(1, history.getMaBan());
             stmt.setDouble(2, history.getGiaCu());
             stmt.setDouble(3, history.getGiaMoi());
-            stmt.setTimestamp(
-                4,
-                new Timestamp(history.getNgayCapNhat().getTime())
-            );
+            stmt.setTimestamp(4, new Timestamp(history.getNgayCapNhat().getTime()));
             stmt.setString(5, history.getMaNvThayDoi());
             stmt.setString(6, history.getMaLichSuGia());
-            return stmt.executeUpdate();
+
+            int rows = stmt.executeUpdate();
+
+            // FIX QUAN TRỌNG CHO TEST
+            if (rows == 0) {
+                throw new RuntimeException("Không tìm thấy bản ghi để cập nhật");
+            }
+
+            return rows;
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -81,12 +83,12 @@ public class LichSuGiaGioChoiDAO {
 
             stmt.setString(1, maLichSuGia);
             return stmt.executeUpdate();
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    // overload cho TEST/UI (int)
     public int delete(int maLichSuGia) {
         return delete(String.valueOf(maLichSuGia));
     }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="Suite">
+  <test name="BidaShop Tests">
+    <classes>
+      <class name="bida.shop.dao.LichSuGiaGioChoiDAOTest"/>
+      <class name="bida.shop.dao.NhanVienDAOTest"/>
+      <class name="bida.shop.dao.DoUongDAOTest"/>
+      <class name="automation.tests.LoginTest"/>
+    </classes>
+  </test>
+</suite>
